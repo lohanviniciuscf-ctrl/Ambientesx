@@ -262,7 +262,14 @@ function renderConsolidado(){
  if(chart) chart.destroy();
  chart=new Chart(chartCanvas.getContext('2d'),{
   type:'bar',
-  data:{labels:Object.keys(diasMap),datasets:[{data:Object.values(diasMap)}]},
+  data:{
+    labels:Object.keys(diasMap),
+    datasets:[{
+      data:Object.values(diasMap),
+      barThickness:18,
+      maxBarThickness:22
+    }]
+  },
   options:{responsive:true,scales:{y:{beginAtZero:true}}}
  });
 }
