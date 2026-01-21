@@ -234,14 +234,14 @@ function deletePedido(id){
 
 function downloadCSV(){
  if(pedidos.length===0){alert("Nenhum dado para exportar");return;}
- let csv="Descrição,Valor,Custo,Ordinários,Data\n";
+ let csv="ID,Descrição,Valor,Custo,Ordinários,Data ISO,Data Legível,Ambiente,Usuário\n";
  pedidos.forEach(p=>{
-  csv+=`${p.desc},${p.valor},${p.custo||0},${p.ordinario||0},${new Date(p.data).toLocaleDateString()}\n`;
+  csv+=`${p.id},${p.desc},${p.valor},${p.custo||0},${p.ordinario||0},${new Date(p.data).toISOString()},${new Date(p.data).toLocaleString()},${env},${userAtual}\n`;
  });
  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
  const link=document.createElement("a");
  link.href=URL.createObjectURL(blob);
- link.download=env+"_"+userAtual+"_dados.csv";
+ link.download=env+"_"+userAtual+"_dados_completos.csv";
  link.click();
 }
 
