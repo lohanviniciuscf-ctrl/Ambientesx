@@ -68,6 +68,7 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 <div style="margin-bottom:20px;">
   <button onclick="showVendas()">📄 Página de Vendas</button>
   <button onclick="showConsolidado()">📊 Consolidado</button>
+  <button onclick="downloadCSV()">⬇️ Baixar CSV</button>
 </div>
 
 <div id="vendas">
@@ -229,6 +230,19 @@ function deletePedido(id){
   localStorage.setItem(env+"_"+userAtual,JSON.stringify(pedidos));
   renderVendas();
  }
+}
+
+function downloadCSV(){
+ if(pedidos.length===0){alert("Nenhum dado para exportar");return;}
+ let csv="Descrição,Valor,Custo,Ordinários,Data\n";
+ pedidos.forEach(p=>{
+  csv+=`${p.desc},${p.valor},${p.custo||0},${p.ordinario||0},${new Date(p.data).toLocaleDateString()}\n`;
+ });
+ const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+ const link=document.createElement("a");
+ link.href=URL.createObjectURL(blob);
+ link.download=env+"_"+userAtual+"_dados.csv";
+ link.click();
 }
 
 function renderConsolidado(){
