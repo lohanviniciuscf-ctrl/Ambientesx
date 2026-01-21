@@ -40,7 +40,6 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 /*  EFEITOS 3D CLEAN CORRIGIDOS  */
 /* ============================= */
 
-/* Cards com profundidade */
 .metric,
 .lead,
 .box {
@@ -52,7 +51,6 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
     filter .35s ease;
 }
 
-/* IMPORTANTE: não pode capturar clique */
 .metric::before,
 .lead::before,
 .box::before {
@@ -62,10 +60,9 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
   border-radius:inherit;
   background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(0,0,0,.15));
   opacity:.4;
-  pointer-events:none; /* <- ESSENCIAL PARA NÃO BLOQUEAR CLIQUE */
+  pointer-events:none;
 }
 
-/* Elevação suave */
 .metric:hover,
 .lead:hover,
 .box:hover {
@@ -76,10 +73,9 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
   filter: brightness(1.05);
 }
 
-/* Botões 3D real */
 button {
   position: relative;
-  z-index: 2; /* <- garante que fique acima dos efeitos */
+  z-index: 2;
   transform-style: preserve-3d;
   box-shadow:
     0 6px 0 rgba(0,0,0,.35),
@@ -105,7 +101,6 @@ button:active {
     0 6px 12px rgba(0,0,0,.4);
 }
 
-/* Inputs com leve profundidade */
 input {
   box-shadow:
     inset 0 2px 5px rgba(0,0,0,.3),
@@ -121,7 +116,6 @@ input:focus {
     0 10px 22px rgba(0,0,0,.35);
 }
 
-/* Barra de progresso com efeito glass */
 .progress-bar {
   box-shadow:
     inset 0 2px 6px rgba(0,0,0,.5),
@@ -137,7 +131,6 @@ input:focus {
 </head>
 <body>
 
-<!-- Seleção de ambiente -->
 <div id="envSelect" class="center">
   <div class="box">
     <h2>🌐 Escolha o ambiente</h2><br>
@@ -147,7 +140,6 @@ input:focus {
   </div>
 </div>
 
-<!-- Tela de login -->
 <div id="loginScreen" class="center hidden">
   <div class="box">
     <button onclick="backToEnv()">⬅ Voltar</button>
@@ -159,7 +151,6 @@ input:focus {
   </div>
 </div>
 
-<!-- Tela principal -->
 <div id="mainApp" class="hidden" style="padding:30px">
 <header>
   <h2 id="appTitle"></h2>
@@ -173,19 +164,21 @@ input:focus {
   <button onclick="showConsolidado()">📊 Consolidado</button>
 </div>
 
-<!-- Página de Vendas -->
 <div id="vendas">
   <div id="metrics" class="metrics"></div>
   <div class="form" id="formArea"></div>
   <div id="lista"></div>
 </div>
 
-<!-- Dashboard Consolidado -->
 <div id="consolidado" class="hidden">
   <header>
     <h2 id="dashTitle"></h2>
     <button onclick="backToMain()">⬅ Voltar</button>
   </header>
+
+  <!-- BOTÃO CSV ADICIONADO -->
+  <button onclick="downloadCSV()" style="margin-bottom:15px;">⬇️ Baixar CSV</button>
+
   <div id="metricsConsolidado" class="metrics"></div>
   <div class="progress-bar">
     <div class="progress-fill" id="metaFill"></div>
@@ -220,24 +213,16 @@ const users={
  Hamonny:{pass:"climatização",env:["Thalles"]}
 };
 
-// --- Variáveis ---
 let env=null,userAtual=null,pedidos=[],chart=null;
-
-// --- Meta ---
 const metaVendas = {Modelle:150000, Cia:0, Thalles:0};
 
-// --- Temas ---
 function themeModelle(){document.documentElement.style.setProperty("--bg","#f6e2cf");document.documentElement.style.setProperty("--card","#e7c09b");document.documentElement.style.setProperty("--accent","#c58c5e");document.documentElement.style.setProperty("--text","#000");}
 function themeCia(){document.documentElement.style.setProperty("--bg","#064e3b");document.documentElement.style.setProperty("--card","#065f46");document.documentElement.style.setProperty("--accent","#10b981");document.documentElement.style.setProperty("--text","#d1fae5");}
 function themeThalles(){document.documentElement.style.setProperty("--bg","#0b1220");document.documentElement.style.setProperty("--card","#0f172a");document.documentElement.style.setProperty("--accent","#38bdf8");document.documentElement.style.setProperty("--text","#e0f2fe");}
 
-// --- Seleciona ambiente ---
 function selectEnv(e){ env=e; envSelect.classList.add("hidden"); loginScreen.classList.remove("hidden"); envTitle.innerText = e==="Modelle"?"👩‍🦰 Modelle Skin":e==="Cia"?"📒 Cia & Arte":"🌬️ Thalles Climatização"; loginError.innerText = ""; document.getElementById('user').value=''; document.getElementById('pass').value='';}
-
-// --- Voltar ---
 function backToEnv(){loginScreen.classList.add("hidden");envSelect.classList.remove("hidden");}
 
-// --- Login ---
 loginBtn.addEventListener('click',()=>{
  const u = document.getElementById('user').value;
  const p = document.getElementById('pass').value;
@@ -254,15 +239,11 @@ loginBtn.addEventListener('click',()=>{
  } else loginError.innerText="Login inválido";
 });
 
-// --- Logout ---
 function logout(){location.reload();}
-
-// --- Vendas / Consolidado ---
 function showVendas(){vendasDiv.classList.remove("hidden");consolidadoDiv.classList.add("hidden");renderVendas();}
 function showConsolidado(){vendasDiv.classList.add("hidden");consolidadoDiv.classList.remove("hidden");renderConsolidado();}
 function backToMain(){consolidadoDiv.classList.add("hidden");vendasDiv.classList.remove("hidden");}
 
-// --- Render Vendas ---
 function renderVendas(){
  let total=0,custos=0;
  pedidos.forEach(p=>{total+=p.valor;if(env!=="Modelle") custos+=(p.custo+p.ordinario);});
@@ -302,12 +283,10 @@ function renderVendas(){
  });
 }
 
-// --- Adicionar / Editar / Excluir ---
 function addPedido(){if(env==="Modelle"){pedidos.push({id:Date.now(),desc:desc.value,valor:+valor.value,data:Date.now()});}else{pedidos.push({id:Date.now(),desc:desc.value,valor:+valor.value,custo:+custo.value,ordinario:+ordinario.value,data:Date.now()});}localStorage.setItem(env+"_"+userAtual,JSON.stringify(pedidos));renderVendas();}
 function editPedido(id){const p=pedidos.find(p=>p.id===id);p.desc=prompt("Descrição:",p.desc)||p.desc;p.valor=+prompt("Valor:",p.valor)||p.valor;if(env!=="Modelle"){p.custo=+prompt("Custo:",p.custo)||p.custo;p.ordinario=+prompt("Ordinários:",p.ordinario)||p.ordinario;}localStorage.setItem(env+"_"+userAtual,JSON.stringify(pedidos));renderVendas();}
 function deletePedido(id){if(confirm("Deseja excluir este pedido?")){pedidos=pedidos.filter(p=>p.id!==id);localStorage.setItem(env+"_"+userAtual,JSON.stringify(pedidos));renderVendas();}}
 
-// --- Consolidado ---
 function renderConsolidado(){
  const total=pedidos.reduce((a,b)=>a+b.valor,0);
  const custos=env==="Modelle"?0:pedidos.reduce((a,b)=>a+(b.custo+b.ordinario),0);
@@ -341,7 +320,34 @@ function renderConsolidado(){
 
  if(chart) chart.destroy();
  const ctx=chartCanvas.getContext('2d');
- chart=new Chart(ctx,{type:'bar',data:{labels:labels,datasets:[{label:'Valor por dia',data:valores,backgroundColor:'#64ffda'}]},options:{responsive:true,scales:{y:{beginAtZero:true}}}});
+ chart=new Chart(ctx,{
+   type:'bar',
+   data:{
+     labels:labels,
+     datasets:[{
+       label:'Valor por dia',
+       data:valores,
+       barThickness: 18,   /* BARRAS MAIS FINAS */
+       maxBarThickness: 20
+     }]
+   },
+   options:{responsive:true,scales:{y:{beginAtZero:true}}}
+ });
+}
+
+/* ===== CSV ===== */
+function downloadCSV(){
+ if(!pedidos.length){alert("Sem dados para exportar");return;}
+ let csv="Descrição,Valor,Custo,Ordinários,Data\n";
+ pedidos.forEach(p=>{
+   csv+=`${p.desc},${p.valor},${p.custo||0},${p.ordinario||0},${new Date(p.data).toLocaleDateString()}\n`;
+ });
+ const blob=new Blob([csv],{type:"text/csv"});
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download=`${env}_${userAtual}.csv`;
+ a.click();
+ URL.revokeObjectURL(a.href);
 }
 </script>
 </body>
